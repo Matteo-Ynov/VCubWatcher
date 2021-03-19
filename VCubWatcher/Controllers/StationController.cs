@@ -4,15 +4,45 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using VCubWatcher.Models;
 
 namespace VCubWatcher.Controllers
 {
     public class StationController : Controller
     {
+        public static List<Station> StationsList = new List<Station>();
+
         // GET: StationController
+        public StationController()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage response = client.GetAsync("https://api.alexandredubois.com/vcub-backend/vcub.php").Result)
+                {
+                    using (HttpContent content = response.Content)
+                    {
+                        var json = content.ReadAsStringAsync().Result;
+                        StationsList = JsonConvert.DeserializeObject<List<Station>>(json);
+                    }
+                }
+            }
+        }
         public ActionResult Index()
         {
-            return View();
+            return View(StationsList);
+        }
+
+        public IActionResult Map()
+        {
+            return View(StationsList);
+        }
+
+        public IActionResult Favorites()
+        {
+            return View(StationsList);
         }
 
         // GET: StationController/Details/5

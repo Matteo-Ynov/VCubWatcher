@@ -1,5 +1,38 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<Station>
+
 @{
+    ViewData["Title"] = "Stations";
+}
+
+@{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Nom de la station</th>
+                <th scope="col">Nombre de vélos électriques</th>
+                <th scope="col">Nombre de vélos total</th>
+                <th scope="col">Emplacement libres</th>
+                <th scope="col">En service</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var station in Model)
+            {
+            <tr>
+                <td>@station.Name</td>
+                <td>@station.ElectricBikeCount</td>
+                <td>@station.BikeCountTotal</td>
+                <td>@station.SlotCount</td>
+                @if (station.IsOnline)
+                {
+                    <td class="table-success"></td>
+                } else {
+                    <td class="table-danger"></td>
+                }
+
+            </tr>
+            }
+
+        </tbody>
+    </table>
 }
