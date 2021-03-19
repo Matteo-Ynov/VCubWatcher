@@ -9,8 +9,12 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
         <style type="text/css">
-            #map { 
+            #map {
                 height: 400px;
+            }
+
+            img.huechange {
+                filter: hue-rotate(120deg);
             }
         </style>
         <title>Carte</title>
@@ -23,7 +27,19 @@
         <script type="text/javascript">
             var lat = 44.8333;
             var lon = -0.5667;
+            var geo = navigator.geolocation;
+            var test = navigator.geolocation.getCurrentPosition(success, error)
             var carte = null;
+
+            function success(pos) {
+                var crd = pos.coords;
+                lat = crd.latitude;
+                lon = crd.longitude;
+            }
+
+            function error(err) {
+                console.warn(`ERROR(${err.code}): ${err.message}`);
+            }
 
             function updateCookie(station) {
                 if (!(document.cookie.split(",").includes(station))) {
@@ -34,13 +50,14 @@
             }
 
             function initMap() {
-                carte = L.map('map').setView([lat, lon], 11);
+                carte = L.map('map').setView([lat, lon], 15);
                 L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
                     attribution: 'données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL - rendu <a href="//openstreetmap.fr">OSM France</a>',
                     minZoom: 1,
                     maxZoom: 20
                 }).addTo(carte);
                 var marker = L.marker([lat, lon]).addTo(carte);
+                marker._icon.classList.add("huechange");
                 @foreach (var station in Model)
                 {
                     var popup = String.Format("Nombre de vélos : {0}      Nombre de places : {1}", @station.SlotCount, station.BikeCountTotal);

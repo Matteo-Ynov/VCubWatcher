@@ -1,7 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
     <!DOCTYPE html>
     <html>
     <head>
@@ -10,6 +7,10 @@
         <style type="text/css">
             #map {
                 height: 400px;
+            }
+
+            img.huechange {
+                filter: hue-rotate(120deg);
             }
         </style>
         <title>Carte</title>
@@ -22,20 +23,38 @@
         <script type="text/javascript">
             var lat = 44.8333;
             var lon = -0.5667;
+            var geo = navigator.geolocation;
+            var test = navigator.geolocation.getCurrentPosition(success, error)
             var carte = null;
 
+            function success(pos) {
+                var crd = pos.coords;
+                lat = crd.latitude;
+                lon = crd.longitude;
+            }
+
+            function error(err) {
+                console.warn(`ERROR(${err.code}): ${err.message}`);
+            }
+
+            function updateCookie(station) {
+                document.cookie = document.cookie.replace(station, "");
+                document.location.reload();
+            }
+
             function initMap() {
-                carte = L.map('map').setView([lat, lon], 11);
+                carte = L.map('map').setView([lat, lon], 15);
                 L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
                     attribution: 'données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL - rendu <a href="//openstreetmap.fr">OSM France</a>',
                     minZoom: 1,
                     maxZoom: 20
                 }).addTo(carte);
                 var marker = L.marker([lat, lon]).addTo(carte);
+                marker._icon.classList.add("huechange");
                 @foreach (var station in Model)
                 {
                     var popup = String.Format("Nombre de vélos : {0}     Nombre de places : {1}", @station.SlotCount, station.BikeCountTotal);
-                    var temp = String.Format("<br><button onclick=updateCookie('{0}') class='btn btn-warning'>Retirer des favoris</button>", @station.Name.Replace(" ", ""));
+                    var temp = String.Format("<br><button onclick=updateCookie('{0}') class='btn btn-warning'>Retirer des favoris</button>", @station.Name.Replace(" ", "").Replace("'", ""));
                     var name = @station.Name.Replace(" ", "").Replace("'", "");
                     <text>{
                     if (document.cookie.split(",").includes("@name")) {

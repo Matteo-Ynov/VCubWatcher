@@ -1,10 +1,12 @@
 ﻿@model List<Station>
+@using System.Web;
 
 @{
     ViewData["Title"] = "Stations";
 }
 
 @{
+    <script src="https://use.fontawesome.com/98e82c05d5.js"></script>
     <table class="table">
         <thead>
             <tr>
@@ -13,24 +15,27 @@
                 <th scope="col">Nombre de vélos total</th>
                 <th scope="col">Emplacement libres</th>
                 <th scope="col">En service</th>
+                <th scope="col">Favoris</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var station in Model)
             {
-            <tr>
-                <td>@station.Name</td>
-                <td>@station.ElectricBikeCount</td>
-                <td>@station.BikeCountTotal</td>
-                <td>@station.SlotCount</td>
-                @if (station.IsOnline)
-                {
-                    <td class="table-success"></td>
-                } else {
-                    <td class="table-danger"></td>
-                }
-
-            </tr>
+                var name = @station.Name.Replace(" ", "").Replace("'", "");
+                <tr>
+                    <td>@station.Name</td>
+                    <td>@station.ElectricBikeCount</td>
+                    <td>@station.BikeCountTotal</td>
+                    <td>@station.SlotCount</td>
+                    @if (station.IsOnline)
+                    {
+                        <td class="table-success"></td>
+                    }
+                    else
+                    {
+                        <td class="table-danger"></td>
+                    }
+                </tr>
             }
 
         </tbody>
